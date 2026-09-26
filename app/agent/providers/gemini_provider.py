@@ -35,11 +35,18 @@ def _to_gemini(messages: list[dict]) -> list[dict]:
                 })
 
             for tc in m.get("tool_calls") or []:
+                function_call = {
+                    "name": tc["name"],
+                    "args": tc["arguments"],
+                }
+
                 parts.append({
-                    "functionCall": {
-                        "name": tc["name"],
-                        "args": tc["arguments"],
-                    }
+                    "functionCall": function_call,
+                    **(
+                        {"thoughtSignature": tc["thought_signature"]}
+                        if tc.get("thought_signature")
+                        else {}
+                    ),
                 })
 
             out.append({
@@ -122,8 +129,16 @@ class GeminiProvider(Provider):
                 "x-goog-api-key": config.GEMINI_API_KEY,
             },
         )
+        if resp.status_code == 429:
+            raise RuntimeError(
+                "Gemini quota exceeded. "
+                "Please wait and retry later or check Gemini API billing/quota."
+            )
 
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise RuntimeError(
+                f"Gemini {resp.status_code}: {resp.text[:1000]}"
+            )
 
         data = resp.json()
 
@@ -140,10 +155,16 @@ class GeminiProvider(Provider):
             elif "functionCall" in part:
                 function_call = part["functionCall"]
 
+                thought_signature = (
+                    part.get("thoughtSignature")
+                    or function_call.get("thought_signature")
+                )
+
                 tool_calls.append({
                     "id": function_call["name"],
                     "name": function_call["name"],
                     "arguments": function_call.get("args", {}),
+                    "thought_signature": thought_signature,
                 })
 
         usage = data.get("usageMetadata", {})
