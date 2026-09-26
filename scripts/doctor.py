@@ -56,9 +56,15 @@ def main() -> int:
               "openai" if key else "OPENAI_API_KEY is empty")
         if key:
             _probe_openai(key)
+    elif provider == "gemini":
+        key = os.environ.get("GEMINI_API_KEY", "")
+        check("llm provider", OK if key else FAIL,
+              "gemini" if key else "GEMINI_API_KEY is empty")
+        if key:
+            _probe_openai(key)
     else:
         check("llm provider", FAIL,
-              f"unknown LLM_PROVIDER={provider!r} (mock | anthropic | openai)")
+              f"unknown LLM_PROVIDER={provider!r} (mock | anthropic | openai | gemini)")
 
     endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "")
     if endpoint:

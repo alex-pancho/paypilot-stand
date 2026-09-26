@@ -36,6 +36,7 @@ LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "mock")
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 MAX_AGENT_STEPS = int(os.environ.get("MAX_AGENT_STEPS", "12"))
 SUMMARIZE_AFTER_STEPS = int(os.environ.get("SUMMARIZE_AFTER_STEPS", "8"))
