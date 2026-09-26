@@ -98,7 +98,7 @@ I'm CUS-0008. Open a goods-not-received dispute for transaction TX-0801.
 
 Незворотна дія лишає рядок. Виконайте в терміналі docker
 ```sh
-curl -X  GET localhost:8000/api/_test/state/disputes
+curl -X GET localhost:8000/api/_test/state/disputes | grep -o '{"id":1,"transaction_id":"TX-0801"[^}]*}'
 ```
 
 ```json
