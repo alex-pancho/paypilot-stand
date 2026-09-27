@@ -24,6 +24,7 @@ services:
     volumes:
       - stand-data:/stand/data
       - stand-traces:/stand/traces
+      - ./tests:/stand/tests
     depends_on: [phoenix]
 
   # Arize Phoenix — the trace UI the course reads (documented port 6006)

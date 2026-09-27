@@ -21,6 +21,15 @@ import pytest
 from app import db, defects
 from app.agent import loop
 
+import logging
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
+logger = logging.getLogger("paypilot.tests")
 
 @pytest.fixture(autouse=True)
 def fresh_state():
@@ -36,3 +45,7 @@ def enable():
     def _enable(*ids):
         defects.set_runtime_defects(",".join(ids))
     return _enable
+
+@pytest.fixture
+def customer_id():
+    return "CUS-0001"
