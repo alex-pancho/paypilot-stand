@@ -3,6 +3,25 @@ import difflib
 import logging
 from app import db
 from app.engines import policy
+import time
+
+
+logger = logging.getLogger(__name__)
+BASE_URL = "http://127.0.0.1:8000"
+
+
+def wait_for_prompt_overlay(timeout=3, interval=0.1):
+    started = time.monotonic()
+
+    while time.monotonic() - started < timeout:
+        prompt = get_system_prompt()
+
+        if prompt["overlays"]:
+            return prompt
+
+        time.sleep(interval)
+
+    raise AssertionError("Prompt overlay was not applied")
 
 
 def get_expected_fx_spread(customer_id: str) -> float:
@@ -15,8 +34,6 @@ def get_expected_fx_spread(customer_id: str) -> float:
 
     return policy.FX_SPREAD_PCT[customer["tier"]]
 
-logger = logging.getLogger(__name__)
-BASE_URL = "http://127.0.0.1:8000"
 
 def get_system_prompt(token: str="") -> str:
     response = httpx.get(

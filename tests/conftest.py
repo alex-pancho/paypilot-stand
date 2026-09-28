@@ -16,12 +16,16 @@ from pathlib import Path as _Path
 _tmpdir = tempfile.mkdtemp(prefix="paypilot-tests-")
 os.environ["PAYPILOT_DB"] = str(_Path(_tmpdir) / "test.db")
 
+import logging
 import pytest
 
 from app import db, defects
 from app.agent import loop
 
-import logging
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
 
 
 logging.basicConfig(
@@ -40,11 +44,21 @@ def fresh_state():
     defects.set_runtime_defects(None)
 
 
+@pytest.fixture(scope="module")
+def lesson_01_profile():
+    os.environ["PROFILE"] = "lesson-01"
+    client.put("/api/_test/profile", json={"profile": "lesson-01"})
+    yield
+    client.put("/api/_test/profile", json={"profile": "clean"})    
+    os.environ["PROFILE"] = "clean"
+
+
 @pytest.fixture
 def enable():
     def _enable(*ids):
         defects.set_runtime_defects(",".join(ids))
     return _enable
+
 
 @pytest.fixture
 def customer_id():
