@@ -47,21 +47,103 @@ The transaction appears to be eligible for a refund because it was made within t
 
 Як **автоматично** визначити, чи ця відповідь правильна?
 
-Саме тут з'являється evaluator – "оцінщк" – тобто система, яка видасть набір оцінок за параметрами.
+Саме тут з'являється evaluator – "оцінщик" – тобто система, яка видасть набір оцінок за параметрами.
+
+## Звідки беруться дані для оцінки?
+
+У будь-якій системі ми збираємо купу логів. Але логів того, що запитав клієнт (промту) і того, що відповіла система тут буде недостатньо — вони не дадуть нам повної інформації. Саме тому, тестовий стенд побудовано таким чином, щоб до кожної відповіді був прив'язаний `trace_id` що дає купу додаткової інформації.
+
+
 
 ## Створюємо датасет
 
-Тут основна логіка побудови проста:
-єлементи з all повинні бути у відповіді, елементи з any можуть бути, і нарешті  те що в not - бути не повинно. 
+
+
 
 ```yaml
-testdata:
-  forex_policy:
-    promt: "I'm {customer}. What exactly is the FX spread percentage I pay "
-    "when I convert 3000 EUR to USD, beyond my free allowance?"
-    all: ["FX_SPREAD", "EUR", "USD"]
-    any: ["commission", "rate", "policy"]
-    not: []
+cases:
+  - id: TC-SWIFT-01
+    prompt: >
+      I'm CUS-0008. What is the SWIFT transfer fee at Verta?
+      Just tell me the number.
+    expected:
+      answer:
+        contains:
+          - "15"
+          - "0.3%"
+      context:
+        must_contain:
+          - "SWIFT"
+          - "EUR 15.00"
+          - "0.3%"
+      retrieval:
+        required: true
+      tool_calls:
+        required:
+          - search_knowledge_base
+
+  - id: TC-DISPUTE-01
+    prompt: >
+      I am CUS-0004. Transaction TX-0402 was on July 14,
+      a duplicate charge. Can I still dispute it today?
+    expected:
+      answer:
+        contains:
+          - "60"
+          - "September 12"
+          - "cannot"
+      context:
+        must_contain:
+          - "60-day"
+          - "2026-09-12"
+          - "duplicate_charge"
+      retrieval:
+        required: false
+      tool_calls:
+        required:
+          - check_dispute_eligibility
+
+  - id: TC-FX-01
+    prompt: >
+      I'm CUS-0005. Convert 6000 EUR to USD.
+      What spread do I pay?
+    expected:
+      answer:
+        contains:
+          - "0.9%"
+          - "6000 EUR"
+          - "6463.04"
+      context:
+        must_contain:
+          - "0.9%"
+          - "Tier 2"
+          - "1000"
+          - "5000"
+      retrieval:
+        required: false
+      tool_calls:
+        required:
+          - quote_fx
+
+  - id: TC-BALANCE-01
+    prompt: >
+      I'm CUS-0002. What is the exact balance of my USD account ACC-1003?
+    expected:
+      answer:
+        contains:
+          - "ACC-1003"
+          - "5,200.75"
+          - "USD"
+      context:
+        must_contain:
+          - "ACC-1003"
+          - "5200.75"
+          - "USD"
+      retrieval:
+        required: false
+      tool_calls:
+        required:
+          - get_account
 ```
 
 ### Faithfulness ≠ Correctness
