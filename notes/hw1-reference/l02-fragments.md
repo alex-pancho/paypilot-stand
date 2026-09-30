@@ -13,3 +13,16 @@
 
 1. виконання [docker compose run --rm eval --runs 3 --baseline-runs 2 --dry-run](notes/hw1-reference/runs/dry-run.md)
 2. виконання [docker compose run --rm eval --runs 3 --baseline-runs 2](notes/hw1-reference/runs/full-run.md)
+
+текст:
+```
+Повний specification-review.md , base.v1.1.md , prompts/CHANGELOG.md і Prompt
+Governance Policy з L01 лишаються у вашому репозиторії й окремо не
+здаються.
+```
+Переформулювати:
+```
+У завдання ви не включаєте:
+Повний specification-review.md , base.v1.1.md , prompts/CHANGELOG.md і Prompt
+Governance Policy з L01
+```
