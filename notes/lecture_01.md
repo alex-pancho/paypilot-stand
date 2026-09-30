@@ -1,6 +1,6 @@
-## Нотатки ментора — Лекція 1
+# Нотатки ментора — Лекція 1
 
-### 1. Основна ідея лекції
+## 1. Основна ідея лекції
 
 Системний промпт — це не просто текст, який ми один раз написали для LLM.
 
@@ -241,8 +241,8 @@ outputs
 ```yaml
 testdata:
   forex_policy:
-    promt: "I'm {customer}. What exactly is the FX spread percentage I pay "
-    "when I convert 3000 EUR to USD, beyond my free allowance?"
+    prompt: >
+        I'm {customer}. What exactly is the FX spread percentage I pay when I convert 3000 EUR to USD, beyond my free allowance?
     all: ["FX_SPREAD", "EUR", "USD"]
     any: ["commission", "rate", "policy"]
     not: []
