@@ -60,7 +60,7 @@ docker compose exec stand python scripts/doctor.py # діагностика
 ```bash
 curl -X POST localhost:8000/chat \
   -H 'content-type: application/json' \
-  -d '{"session_id": "my-run-1", "message": "I am CUS-0001. What is my balance?"}'
+    -d '{"session_id": "my-run-1", "message": "I am CUS-0001. What is my balance?"}'
 ```
 
 ```json
